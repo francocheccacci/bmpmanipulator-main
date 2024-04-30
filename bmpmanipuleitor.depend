@@ -1,0 +1,88 @@
+# depslib dependency file v1.0
+1712571230 source:/home/ezequiel/Progra/BMP/bmpmanipuleitor/main.c
+	<stdio.h>
+	"funciones_estudiante.h"
+	"funciones_docente.h"
+	"constantes.h"
+
+1712621035 /home/ezequiel/Progra/BMP/bmpmanipuleitor/funciones_docente.h
+	"estructuras.h"
+
+1712621994 source:/home/ezequiel/Progra/BMP/bmpmanipuleitor/funciones_docente.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"estructuras.h"
+	"constantes.h"
+	"funciones_docente.h"
+
+1712539850 source:/home/ezequiel/Progra/BMP/bmpmanipuleitor/funciones_estudiante.c
+
+1712539559 /home/ezequiel/Progra/BMP/bmpmanipuleitor/funciones_estudiante.h
+
+1712591837 /home/ezequiel/Progra/BMP/bmpmanipuleitor/estructuras.h
+
+1712541473 /home/ezequiel/Progra/BMP/bmpmanipuleitor/constantes.h
+
+1713020079 source:c:\users\asus\desktop\bmpmanipuleitor\funciones_estudiante.c
+	<stdio.h>
+	<stdlib.h>
+	"estructuras.h"
+	"funciones_estudiante.h"
+	"constantes.h"
+
+1713019734 c:\users\asus\desktop\bmpmanipuleitor\estructuras.h
+
+1712789517 source:c:\users\asus\desktop\bmpmanipuleitor\main.c
+	<stdio.h>
+	"funciones_estudiante.h"
+	"constantes.h"
+
+1712975821 c:\users\asus\desktop\bmpmanipuleitor\funciones_estudiante.h
+	"estructuras.h"
+
+1712697875 c:\users\asus\desktop\bmpmanipuleitor\funciones_estudiante.c
+	<stdio.h>
+	<stdlib.h>
+	"estructuras.h"
+
+1712681759 c:\users\asus\desktop\bmpmanipuleitor\constantes.h
+
+1712789517 source:c:\franco\00 - proyectos\bmpmanipulator\main.c
+	<stdio.h>
+	"funciones_estudiante.h"
+	"constantes.h"
+
+1713105183 c:\franco\00 - proyectos\bmpmanipulator\funciones_estudiante.h
+	"estructuras.h"
+
+1713019734 c:\franco\00 - proyectos\bmpmanipulator\estructuras.h
+
+1712681759 c:\franco\00 - proyectos\bmpmanipulator\constantes.h
+
+1713122956 source:c:\franco\00 - proyectos\bmpmanipulator\funciones_estudiante.c
+	<stdio.h>
+	<stdlib.h>
+	"estructuras.h"
+	"funciones_estudiante.h"
+	"constantes.h"
+
+1714436939 source:f:\05 - facultad\progra\bmpmanipulator-main\funciones_estudiante.c
+	<stdio.h>
+	<stdlib.h>
+	"estructuras.h"
+	"funciones_estudiante.h"
+	"constantes.h"
+
+1714326988 f:\05 - facultad\progra\bmpmanipulator-main\estructuras.h
+
+1714436911 f:\05 - facultad\progra\bmpmanipulator-main\funciones_estudiante.h
+	"estructuras.h"
+
+1714326988 f:\05 - facultad\progra\bmpmanipulator-main\constantes.h
+
+1714326988 source:f:\05 - facultad\progra\bmpmanipulator-main\main.c
+	<stdio.h>
+	"funciones_estudiante.h"
+	"constantes.h"
+
