@@ -136,8 +136,8 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         //aumentar25Contraste(img, header);
         //reducir25Contraste(img,header);
         //aumentar50red(img, header);
-        aumentar50blue(img, header);
-
+        //aumentar50blue(img, header);
+        aumentar50green(img, header);
         fclose(pf);
 
     }else{
@@ -241,6 +241,17 @@ int aumentar50blue(t_pixel *imagen, t_metadata *header){
     return 0;
 }
 
+int aumentar50green(t_pixel *imagen, t_metadata *header){
+      int valor = 0;
+    for (int i = 0; i < header->alto * header->ancho; i++) {
+        valor = imagen[i].pixel[1] + (imagen[i].pixel[1] / 2);
+        imagen[i].pixel[1] = (valor > 255) ? 255 : valor;
+    }
+
+    crearBmpSalida(imagen, header, "aumentar50green.bmp");
+    return 0;
+
+}
 
 // funcion que cree un archivo de salida
 int crearBmpSalida(t_pixel *imagen, t_metadata *header, char nombre[20]){
