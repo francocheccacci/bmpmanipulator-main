@@ -12,4 +12,5 @@ int reducir25Contraste(t_pixel *imagen, t_metadata *header);
 int aumentar50red(t_pixel *imagen, t_metadata *header);
 int aumentar50blue(t_pixel *imagen, t_metadata *header);
 int aumentar50green(t_pixel *imagen, t_metadata *header);
+int recortar50(t_pixel *imagen, t_metadata *header);
 #endif // FUNCIONES_ESTUDIANTE_H_INCLUDED

@@ -137,7 +137,8 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         //reducir25Contraste(img,header);
         //aumentar50red(img, header);
         //aumentar50blue(img, header);
-        aumentar50green(img, header);
+        //aumentar50green(img, header);
+        recortar50(img, header);
         fclose(pf);
 
     }else{
@@ -251,6 +252,29 @@ int aumentar50green(t_pixel *imagen, t_metadata *header){
     crearBmpSalida(imagen, header, "aumentar50green.bmp");
     return 0;
 
+}
+
+int recortar50(t_pixel *imagen, t_metadata *header){
+    int ancho = header->ancho / 2;
+    int alto = header->alto / 2;
+
+    t_pixel *imgReco = malloc(ancho * alto * sizeof(t_pixel));
+
+    for (int i = 0; i < alto; i++) {
+        for (int j = 0; j < ancho; j++) {
+            imgReco[i * ancho + j] = imagen[i * header->ancho + j];
+        }
+    }
+
+    header->alto = alto;
+    header->ancho = ancho;
+
+    crearBmpSalida(imgReco, header, "recortada.bmp");
+
+    free(imgReco);
+
+
+    return 0;
 }
 
 // funcion que cree un archivo de salida
