@@ -134,7 +134,8 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         //escalaDeGrises(img, header);
         //imgNegativa(img, header);
         //aumentar25Contraste(img, header);
-        reducir25Contraste(img,header);
+        //reducir25Contraste(img,header);
+        aumentar50blue(img, header);
         fclose(pf);
 
     }else{
@@ -213,6 +214,17 @@ int reducir25Contraste(t_pixel *imagen, t_metadata *header){
         }
     }
     crearBmpSalida(imagen, header, "contraste25redu.bmp");
+    return 0;
+}
+
+int aumentar50blue(t_pixel *imagen, t_metadata *header){
+    int valor = 0;
+    for (int i = 0; i < header->alto * header->ancho; i++) {
+        valor = imagen[i].pixel[2] + (imagen[i].pixel[2] / 2);
+        imagen[i].pixel[2] = (valor > 255) ? 255 : valor;
+    }
+
+    crearBmpSalida(imagen, header, "aumentar50blue.bmp");
     return 0;
 }
 
