@@ -134,7 +134,13 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         //escalaDeGrises(img, header);
         //imgNegativa(img, header);
         //aumentar25Contraste(img, header);
-        reducir25Contraste(img,header);
+        //reducir25Contraste(img,header);
+        //aumentar50red(img, header);
+        //aumentar50blue(img, header);
+        //aumentar50green(img, header);
+        //recortar50(img, header);
+        rotar90derecha(img, header);
+        //morphing(img, header, 2);
         fclose(pf);
 
     }else{
@@ -190,7 +196,7 @@ int aumentar25Contraste(t_pixel *imagen, t_metadata *header){
             imagen[i].pixel[j] = (unsigned char)valor_nuevo;
         }
     }
-    crearBmpSalida(imagen, header, "contraste25aum.bmp");
+    crearBmpSalida(imagen, header, "imagenesAlumno/contraste25aum.bmp");
     return 0;
 }
 
@@ -212,12 +218,141 @@ int reducir25Contraste(t_pixel *imagen, t_metadata *header){
             imagen[i].pixel[j] = (unsigned char)valor_nuevo;
         }
     }
-    crearBmpSalida(imagen, header, "contraste25redu.bmp");
+    crearBmpSalida(imagen, header, "imagenesAlumno/contraste25redu.bmp");
     return 0;
 }
 
+int aumentar50red(t_pixel *imagen, t_metadata *header){
+    int valor = 0;
+    for (int i = 0; i < header->alto * header->ancho; i++) {
+        valor = imagen[i].pixel[2] + (imagen[i].pixel[2] / 2);
+        imagen[i].pixel[2] = (valor > 255) ? 255 : valor;
+    }
+
+    crearBmpSalida(imagen, header, "imagenesAlumno/aumentar50red.bmp");
+    return 0;
+}
+
+int aumentar50blue(t_pixel *imagen, t_metadata *header){
+    int valor = 0;
+    for (int i = 0; i < header->alto * header->ancho; i++) {
+        valor = imagen[i].pixel[0] + (imagen[i].pixel[0] / 2);
+        imagen[i].pixel[0] = (valor > 255) ? 255 : valor;
+    }
+
+    crearBmpSalida(imagen, header, "imagenesAlumno/aumentar50blue.bmp");
+    return 0;
+}
+
+int aumentar50green(t_pixel *imagen, t_metadata *header){
+      int valor = 0;
+    for (int i = 0; i < header->alto * header->ancho; i++) {
+        valor = imagen[i].pixel[1] + (imagen[i].pixel[1] / 2);
+        imagen[i].pixel[1] = (valor > 255) ? 255 : valor;
+    }
+
+    crearBmpSalida(imagen, header, "imagenesAlumno/aumentar50green.bmp");
+    return 0;
+
+}
+
+int recortar50(t_pixel *imagen, t_metadata *header){
+    // definimos el nuevo tamaño de la imagen
+    int ancho = header->ancho / 2;
+    int alto = header->alto / 2;
+
+    // reservamos memoria para la nueva imagen
+    t_pixel *imgReco = malloc(ancho * alto * sizeof(t_pixel));
+
+    // copiamos los pixeles de la imagen original a la nueva imagen
+    for (int i = 0; i < alto; i++) {
+        for (int j = 0; j < ancho; j++) {
+            // copiamos los pixeles de la imagen original a la nueva imagen
+            imgReco[i * ancho + j] = imagen[i * header->ancho + j];
+        }
+    }
+
+    //modificamos el header de la imagen
+    header->alto = alto;
+    header->ancho = ancho;
+
+    //creamos la imagen de salida
+    crearBmpSalida(imgReco, header, "imagenesAlumno/recortada.bmp");
+
+    free(imgReco);
+
+    return 0;
+}
+
+int rotar90izquierda(t_pixel *imagen, t_metadata *header ){
+
+    // definimos el nuevo tamaño de la imagen
+    int ancho = header->alto;
+    int alto = header->ancho;
+
+    // reservamos memoria para la nueva imagen
+    t_pixel *imgRot = malloc(ancho * alto * sizeof(t_pixel));
+
+    // copiamos los pixeles de la imagen original a la nueva imagen
+    for (int i = 0; i < header->alto; i++) {
+        for (int j = 0; j < header->ancho; j++) {
+            //j * ancho avanza en las columnas
+            //header->alto - i - 1 | calcula la fila en la imagen rotada
+            //me posiciono en la columna con j * ancho
+            imgRot[j * ancho + (header->alto - i - 1)] = imagen[i * header->ancho + j];
+        }
+    }
+
+    //modificamos el header de la imagen
+    header->alto = alto;
+    header->ancho = ancho;
+
+    //creamos la imagen de salida
+    crearBmpSalida(imgRot, header, "imagenesAlumno/rotada90derecha.bmp");
+
+    free(imgRot);
+
+    return 0;
+
+}
+
+int rotar90derecha(t_pixel *imagen, t_metadata *header ){
+
+    // definimos el nuevo tamaño de la imagen
+    int ancho = header->alto;
+    int alto = header->ancho;
+
+    // reservamos memoria para la nueva imagen
+    t_pixel *imgRot = malloc(ancho * alto * sizeof(t_pixel));
+
+    // copiamos los pixeles de la imagen original a la nueva imagen
+    for (int i = 0; i < header->alto; i++) {
+        for (int j = 0; j < header->ancho; j++) {
+            // imagen[i * header->ancho + j] es la posicion (i,j) de la imagen original.
+            // header->ancho es la altura de la imagen y j representa la coordenada Y
+            // en la imagen rotada i es mi eje X
+
+            imgRot[ (header->ancho - j - 1) * ancho + i] = imagen[i * header->ancho + j];
+            // a la altura de la imagen le resto el valor de j para posicionarme en el pixel de la imagen rotada
+        }
+    }
+
+    //modificamos el header de la imagen
+    header->alto = alto;
+    header->ancho = ancho;
+
+    //creamos la imagen de salida
+    crearBmpSalida(imgRot, header, "imagenesAlumno/rotada90derecha.bmp");
+
+    free(imgRot);
+
+    return 0;
+
+}
+
+
 // funcion que cree un archivo de salida
-int crearBmpSalida(t_pixel *imagen, t_metadata *header, char nombre[20]){
+int crearBmpSalida(t_pixel *imagen, t_metadata *header, char nombre[]){
     FILE *pf;
     pf = fopen(nombre, "wb");
 
