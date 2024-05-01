@@ -138,7 +138,8 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         //aumentar50red(img, header);
         //aumentar50blue(img, header);
         //aumentar50green(img, header);
-        recortar50(img, header);
+        //recortar50(img, header);
+        rotar90derecha(img, header);
         fclose(pf);
 
     }else{
@@ -255,26 +256,61 @@ int aumentar50green(t_pixel *imagen, t_metadata *header){
 }
 
 int recortar50(t_pixel *imagen, t_metadata *header){
+    // definimos el nuevo tamaño de la imagen
     int ancho = header->ancho / 2;
     int alto = header->alto / 2;
 
+    // reservamos memoria para la nueva imagen
     t_pixel *imgReco = malloc(ancho * alto * sizeof(t_pixel));
 
+    // copiamos los pixeles de la imagen original a la nueva imagen
     for (int i = 0; i < alto; i++) {
         for (int j = 0; j < ancho; j++) {
+            // copiamos los pixeles de la imagen original a la nueva imagen
             imgReco[i * ancho + j] = imagen[i * header->ancho + j];
         }
     }
 
+    //modificamos el header de la imagen
     header->alto = alto;
     header->ancho = ancho;
 
+    //creamos la imagen de salida
     crearBmpSalida(imgReco, header, "recortada.bmp");
 
     free(imgReco);
 
+    return 0;
+}
+
+int rotar90derecha(t_pixel *imagen, t_metadata *header ){
+
+    // definimos el nuevo tamaño de la imagen
+    int ancho = header->alto;
+    int alto = header->ancho;
+
+    // reservamos memoria para la nueva imagen
+    t_pixel *imgRot = malloc(ancho * alto * sizeof(t_pixel));
+
+    // copiamos los pixeles de la imagen original a la nueva imagen
+    for (int i = 0; i < header->alto; i++) {
+        for (int j = 0; j < header->ancho; j++) {
+            // copiamos los pixeles de la imagen original a la nueva imagen
+            imgRot[j * ancho + (header->alto - i - 1)] = imagen[i * header->ancho + j];
+        }
+    }
+
+    //modificamos el header de la imagen
+    header->alto = alto;
+    header->ancho = ancho;
+
+    //creamos la imagen de salida
+    crearBmpSalida(imgRot, header, "rotada90derecha.bmp");
+
+    free(imgRot);
 
     return 0;
+
 }
 
 // funcion que cree un archivo de salida
