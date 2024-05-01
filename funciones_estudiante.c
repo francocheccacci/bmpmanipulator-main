@@ -59,8 +59,21 @@ void solucion(int argc, char* argv[]){
 
     //declarar y que la funcion retorne header e imagen
     openBmpFile(&img, &header);
-
-
+//        // mostrar imagen
+        // archivo de salida
+        //crearBmpSalida(img, header);
+        //escalaDeGrises(img, header->alto, header->ancho);
+        crearBmpSalida(&img, &header, "estudianteV2.bmp");
+        //escalaDeGrises(img, header);
+        //imgNegativa(img, header);
+        //aumentar25Contraste(img, header);
+        //reducir25Contraste(img,header);
+        //aumentar50red(img, header);
+        //aumentar50blue(img, header);
+        //aumentar50green(img, header);
+        //recortar50(img, header);
+        //rotar90derecha(&img, &header);
+        //morphing(img, header, 2);
 
     //free(img);
     /*
@@ -98,49 +111,24 @@ void openBmpFile(t_pixel *img, t_metadata *header){
 
         // leo la imagen
         img = (t_pixel *)malloc(header->alto * header->ancho * sizeof(t_pixel));
-        t_pixel *ini = img;
         if(img == NULL){
             printf("\n No se pudo reservar memoria para la imagen.");
             return;
         }
 
         fseek(pf, header->comienzoImagen, SEEK_SET);
-        //fread(img->pixel, sizeof(img->pixel),header->alto * header->ancho,pf);
         for( int i=0; i< header->alto; i++){
             for(int j=0; j<header->ancho; j++){
                 fread(img[i*header->ancho+j].pixel, sizeof(unsigned char), 3, pf);
             }
         }
 
-//        unsigned int padding = (4 - (header->ancho * sizeof(img->pixel)) % 4) % 4; // Calcula el padding
-//        for (int i = 0; i < header->alto; i++) {
-//            fread(img + i * header->ancho, sizeof(img->pixel),header->ancho, pf);
-//            fseek(pf, padding, SEEK_CUR); // Salta los bytes de relleno
-//        }
+        printf("Primer pixel: R=%u, G=%u, B=%u\n", img[0].pixel[0], img[0].pixel[1], img[0].pixel[2]);
 
-          printf("Primer pixel: R=%u, G=%u, B=%u\n", img[0].pixel[0], img[0].pixel[1], img[0].pixel[2]);
+        combinarImagenes(img, header, 0.32222);
 
+        return 0;
 
-
-
-//        // mostrar imagen
-
-
-        // archivo de salida
-        //crearBmpSalida(img, header);
-        //escalaDeGrises(img, header->alto, header->ancho);
-        crearBmpSalida(img, header, "estudianteV2.bmp");
-        img = ini;
-        //escalaDeGrises(img, header);
-        //imgNegativa(img, header);
-        //aumentar25Contraste(img, header);
-        //reducir25Contraste(img,header);
-        //aumentar50red(img, header);
-        //aumentar50blue(img, header);
-        //aumentar50green(img, header);
-        //recortar50(img, header);
-        rotar90derecha(img, header);
-        //morphing(img, header, 2);
         fclose(pf);
 
     }else{
@@ -350,6 +338,76 @@ int rotar90derecha(t_pixel *imagen, t_metadata *header ){
 
 }
 
+int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
+
+    t_pixel *img2 = NULL;
+    t_metadata *header2 = NULL;
+    header2 = malloc(sizeof(t_metadata));
+            printf("hola.\n");
+
+    FILE *pf_img2 = fopen("starwars.bmp", "rb");
+    if (!pf_img2) {
+        printf("No se pudo abrir el archivo.\n");
+        return 1;
+    }
+    if(getc(pf_img2) == 'B' && getc(pf_img2) == 'M'){ // aca estoy parado en el byte 2
+        fread(&header2->tamArchivo, sizeof(unsigned int), 1, pf_img2);
+        fseek(pf_img2, 4, SEEK_CUR); // me muevo 4 bytes, para posicionarme en el byte 10
+                                // este byte nro 10 contiene el inicio de la imagen
+        fread(&header2->comienzoImagen, sizeof(unsigned int), 1, pf_img2);// hago el fread, como es unsigned int ocupa 4bytes,
+                                                                    // y el puntero queda en el byte 14, donde se encuentra el tamanio del header
+        fread(&header2->tamEncabezado, sizeof(unsigned int), 1, pf_img2);
+        fread(&header2->ancho, sizeof(unsigned int), 1, pf_img2);
+        fread(&header2->alto, sizeof(unsigned int), 1, pf_img2);
+        fseek(pf_img2, 2, SEEK_CUR);
+        fread(&header2->profundidad, sizeof(unsigned short), 1, pf_img2);
+
+        // leo la imagen
+        img2 = (t_pixel *)malloc(header2->alto * header2->ancho * sizeof(t_pixel));
+        if(img2 == NULL){
+            printf("\n No se pudo reservar memoria para la imagen.");
+            return 1;
+        }
+
+        fseek(pf_img2, header2->comienzoImagen, SEEK_SET);
+        for( int i=0; i< header2->alto; i++){
+            for(int j=0; j<header2->ancho; j++){
+                fread(img2[i*header2->ancho+j].pixel, sizeof(unsigned char), 3, pf_img2);
+            }
+        }
+
+        printf("Primer pixel: R=%u, G=%u, B=%u\n", img2[0].pixel[0], img2[0].pixel[1], img2[0].pixel[2]);
+
+        fclose(pf_img2);
+        unsigned char r, g, b;
+        t_pixel *imgCombinada = malloc(header1->alto * header1->ancho * sizeof(t_pixel));
+        for (int i = 0; i < header1->alto * header1->ancho; i++) {
+            // copiamos los pixeles de la imagen original a la nueva imagen
+            b = ( ((1 - variador) * imagen1[i].pixel[0]) + img2[i].pixel[0] ) / 2;
+            g = ( ((1 - variador) * imagen1[i].pixel[1]) + img2[i].pixel[1] ) / 2;
+            r = ( ((1 - variador) * imagen1[i].pixel[2]) + img2[i].pixel[2] ) / 2;
+//            imgCombinada[i].pixel[0] = (1 - variador)*imagen1[i].pixel[0] + img2[i].pixel[0];
+//            imgCombinada[i].pixel[1] = (1 - variador)*imagen1[i].pixel[1] + img2[i].pixel[1];
+//            imgCombinada[i].pixel[2] = (1 - variador)*imagen1[i].pixel[2] + img2[i].pixel[2];
+            imgCombinada[i].pixel[0] = b;
+            imgCombinada[i].pixel[1] = g;
+            imgCombinada[i].pixel[2] = r;
+
+        }
+
+        crearBmpSalida(imgCombinada, header1, "combinada.bmp");
+
+        printf("hola");
+    }else{
+        printf("\n El archivo indicado no es de tipo bit map.");
+    }
+
+    printf("holis");
+    free(img2);
+    free(header2);
+
+    return 0;
+}
 
 // funcion que cree un archivo de salida
 int crearBmpSalida(t_pixel *imagen, t_metadata *header, char nombre[]){

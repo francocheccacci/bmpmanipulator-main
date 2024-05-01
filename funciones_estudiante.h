@@ -15,5 +15,5 @@ int aumentar50green(t_pixel *imagen, t_metadata *header);
 int recortar50(t_pixel *imagen, t_metadata *header);
 int rotar90izquierda(t_pixel *imagen, t_metadata *header );
 int rotar90derecha(t_pixel *imagen, t_metadata *header );
-
+int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador);
 #endif // FUNCIONES_ESTUDIANTE_H_INCLUDED
