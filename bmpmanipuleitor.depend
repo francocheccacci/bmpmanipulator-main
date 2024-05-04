@@ -67,9 +67,10 @@
 	"funciones_estudiante.h"
 	"constantes.h"
 
-1714593884 source:f:\05 - facultad\progra\bmpmanipulator-main\funciones_estudiante.c
+1714846051 source:f:\05 - facultad\progra\bmpmanipulator-main\funciones_estudiante.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 	"estructuras.h"
 	"funciones_estudiante.h"
 	"constantes.h"

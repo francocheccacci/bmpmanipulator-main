@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "estructuras.h"
 #include "funciones_estudiante.h"
 #include "constantes.h"
+
 /*
     Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el último campo.
     Si alguno de los integrantes del grupo dejara la materia, completar de todos modos sus datos, aclarando que no entrega.
@@ -58,12 +60,12 @@ void solucion(int argc, char* argv[]){
 
 
     //declarar y que la funcion retorne header e imagen
-    openBmpFile(&img, &header);
+        openBmpFile(&img, &header);
 //        // mostrar imagen
         // archivo de salida
         //crearBmpSalida(img, header);
         //escalaDeGrises(img, header->alto, header->ancho);
-        crearBmpSalida(&img, &header, "estudianteV2.bmp");
+        //crearBmpSalida(&img, &header, "estudianteV2.bmp");
         //escalaDeGrises(img, header);
         //imgNegativa(img, header);
         //aumentar25Contraste(img, header);
@@ -72,7 +74,7 @@ void solucion(int argc, char* argv[]){
         //aumentar50blue(img, header);
         //aumentar50green(img, header);
         //recortar50(img, header);
-        //rotar90derecha(&img, &header);
+
         //morphing(img, header, 2);
 
     //free(img);
@@ -104,15 +106,15 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         fseek(pf, 2, SEEK_CUR);
         fread(&header->profundidad, sizeof(unsigned short), 1, pf);
 
-        printf("\n tam arch: %d \n comienzo: %d \n tam enca: %d \n ancho: %d \n alto: %d \n prof %d ",
-               header->tamArchivo, header->comienzoImagen, header->tamEncabezado, header->ancho,
-               header->alto, header->profundidad
-               );
+        // printf("\n tam arch: %d \n comienzo: %d \n tam enca: %d \n ancho: %d \n alto: %d \n prof %d ",
+        //        header->tamArchivo, header->comienzoImagen, header->tamEncabezado, header->ancho,
+        //        header->alto, header->profundidad
+        //        );
 
         // leo la imagen
         img = (t_pixel *)malloc(header->alto * header->ancho * sizeof(t_pixel));
         if(img == NULL){
-            printf("\n No se pudo reservar memoria para la imagen.");
+            printf("No se pudo reservar memoria para la imagen. \n");
             return;
         }
 
@@ -123,10 +125,16 @@ void openBmpFile(t_pixel *img, t_metadata *header){
             }
         }
 
-        printf("Primer pixel: R=%u, G=%u, B=%u\n", img[0].pixel[0], img[0].pixel[1], img[0].pixel[2]);
-
-        combinarImagenes(img, header, 0.32222);
-
+        //imgNegativa(img, header);
+        //aumentar25Contraste(img, header);
+        //reducir25Contraste(img,header);
+        //aumentar50red(img, header);
+        //aumentar50blue(img, header);
+        //aumentar50green(img, header);
+        //recortar50(img, header);
+        escalaDeGrises(img, header);
+        rotar90izquierda(img, header);
+       // rotar90derecha(img, header);
         return 0;
 
         fclose(pf);
@@ -135,23 +143,22 @@ void openBmpFile(t_pixel *img, t_metadata *header){
         printf("\n El archivo indicado no es de tipo bit map.");
     }
 
-
-
     fclose(pf);
 
 }
 
 // funcion que convierte la imagen a escala de grises
 int escalaDeGrises(t_pixel *imagen, t_metadata *header) {
+
     for (int i = 0; i < header->alto * header->ancho; i++) {
-        unsigned char promedio = (imagen[i].pixel[0] + imagen[i].pixel[1] + imagen[i].pixel[2]) / 3;
+        unsigned char promedio = (imgCopy[i].pixel[0] + imgCopy[i].pixel[1] + imgCopy[i].pixel[2]) / 3;
         for (int j = 0; j < 8; j++) {
-            imagen[i].pixel[j] = promedio;
+            imgCopy[i].pixel[j] = promedio;
         }
     }
 
-    crearBmpSalida(imagen, header, "escala_grises.bmp");
-
+    crearBmpSalida(imgCopy, header, "imagenesAlumno/escala_grises.bmp");
+    free(imgCopy);
     return 0;
 }
 
@@ -163,7 +170,7 @@ int imgNegativa(t_pixel *imagen, t_metadata * header){
         }
     }
 
-    crearBmpSalida(imagen, header, "negativo.bmp");
+    crearBmpSalida(imagen, header, "imagenesAlumno/negativo.bmp");
     return 0;
 }
 
@@ -296,7 +303,7 @@ int rotar90izquierda(t_pixel *imagen, t_metadata *header ){
     header->ancho = ancho;
 
     //creamos la imagen de salida
-    crearBmpSalida(imgRot, header, "imagenesAlumno/rotada90derecha.bmp");
+    crearBmpSalida(imgRot, header, "imagenesAlumno/rotada90izquierda.bmp");
 
     free(imgRot);
 
@@ -345,7 +352,11 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
     header2 = malloc(sizeof(t_metadata));
             printf("hola.\n");
 
-    FILE *pf_img2 = fopen("starwars.bmp", "rb");
+    printf("Ingrese nombre del segundo archivo para combinar: (sin la extenstion .bmp) \n");
+    char nombre[50];
+    scanf("%s", nombre);
+
+    FILE *pf_img2 = fopen(strcat(nombre, ".bmp"), "rb");
     if (!pf_img2) {
         printf("No se pudo abrir el archivo.\n");
         return 1;
@@ -359,6 +370,18 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
         fread(&header2->tamEncabezado, sizeof(unsigned int), 1, pf_img2);
         fread(&header2->ancho, sizeof(unsigned int), 1, pf_img2);
         fread(&header2->alto, sizeof(unsigned int), 1, pf_img2);
+
+        if (header1->alto != header2->alto || header1->ancho != header2->ancho)
+        {
+            printf("Las imagenes no tienen el mismo tamaño, por lo tanto, no se pueden combinar.\n");
+            free(img2);
+            free(header2);
+            fclose(pf_img2);
+            return 1;
+
+        }
+
+
         fseek(pf_img2, 2, SEEK_CUR);
         fread(&header2->profundidad, sizeof(unsigned short), 1, pf_img2);
 
@@ -375,8 +398,6 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
                 fread(img2[i*header2->ancho+j].pixel, sizeof(unsigned char), 3, pf_img2);
             }
         }
-
-        printf("Primer pixel: R=%u, G=%u, B=%u\n", img2[0].pixel[0], img2[0].pixel[1], img2[0].pixel[2]);
 
         fclose(pf_img2);
         unsigned char r, g, b;
@@ -395,14 +416,13 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
 
         }
 
-        crearBmpSalida(imgCombinada, header1, "combinada.bmp");
+        crearBmpSalida(imgCombinada, header1, "imagenesAlumno/combinada.bmp");
 
         printf("hola");
     }else{
         printf("\n El archivo indicado no es de tipo bit map.");
     }
 
-    printf("holis");
     free(img2);
     free(header2);
 
