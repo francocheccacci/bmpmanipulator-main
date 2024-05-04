@@ -284,7 +284,7 @@ int rotar90izquierda(t_pixel *imagen, t_metadata *header ){
     // definimos el nuevo tamaño de la imagen
     int ancho = header->alto;
     int alto = header->ancho;
-
+    t_pixel *ini = imagen;
     // reservamos memoria para la nueva imagen
     t_pixel *imgRot = malloc(ancho * alto * sizeof(t_pixel));
 
@@ -298,6 +298,7 @@ int rotar90izquierda(t_pixel *imagen, t_metadata *header ){
         }
     }
 
+    imagen = ini;
     //modificamos el header de la imagen
     header->alto = alto;
     header->ancho = ancho;
@@ -345,8 +346,7 @@ int rotar90derecha(t_pixel *imagen, t_metadata *header ){
 
 }
 
-int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
-
+int combinarImagenes(t_pixel *imagen1, t_metadata *header1){
     t_pixel *img2 = NULL;
     t_metadata *header2 = NULL;
     header2 = malloc(sizeof(t_metadata));
@@ -361,6 +361,12 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, float variador){
         printf("No se pudo abrir el archivo.\n");
         return 1;
     }
+    printf("ingrese el variador de la imagen(entre 0 y 1): \n");
+    float variador;
+    do{
+        scanf("%f", &variador);
+    }while(variador < 0 || variador > 1);
+
     if(getc(pf_img2) == 'B' && getc(pf_img2) == 'M'){ // aca estoy parado en el byte 2
         fread(&header2->tamArchivo, sizeof(unsigned int), 1, pf_img2);
         fseek(pf_img2, 4, SEEK_CUR); // me muevo 4 bytes, para posicionarme en el byte 10
