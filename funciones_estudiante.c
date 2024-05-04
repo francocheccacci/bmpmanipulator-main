@@ -68,6 +68,24 @@ void solucion(int argc, char* argv[])
     int resultado = 0;
     resultado = openBmpFile(argv, &img, &header);
 
+    switch (resultado)
+    {
+    case TODO_OK:
+        printf("\n\n *** Ha finalizado el proceso de ejecución. *** \n\n");
+        break;
+    case ERROR_MULT_IMG:
+        printf("\n\nError: Se debe pasar solo una imagen como argumento.\n\n");
+        break;
+    case ERROR_MEMORIA:
+        printf("\n\nError: No se pudo reservar memoria para la imagen.\n\n");
+        break;
+    case ERROR_NO_BMP:
+        printf("\n\nError: El archivo indicado no es de tipo bit map.\n\n");
+        break;
+    case ERROR_NO_IMG:  
+        printf("\n\nError: No se recibe imagen.\n\n");
+        break;
+    }
 
     /*
         Aquí deben hacer el código que solucione lo solicitado.
@@ -92,7 +110,7 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
 
     if(contImagenes > 1)
     {
-        printf("\nSe debe pasar solo una imagen como argumento.\n");
+        //printf("\nSe debe pasar solo una imagen como argumento.\n");
         return ERROR_MULT_IMG;
     }
 
@@ -140,7 +158,7 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
                     t_pixel *ini = img;
                     if(img == NULL)
                     {
-                        printf("\n No se pudo reservar memoria para la imagen.");
+                        //printf("\n No se pudo reservar memoria para la imagen.");
                         return ERROR_MEMORIA;
                     }
 
@@ -162,7 +180,7 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
                 }
                 else
                 {
-                    printf("\n El archivo indicado no es de tipo bit map.");
+                    //printf("\n El archivo indicado no es de tipo bit map.");
                     return ERROR_NO_BMP;
                 }
             }
@@ -172,7 +190,7 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
     }
     else
     {
-        printf("No recibe imagen");
+        //printf("No recibe imagen");
         return ERROR_NO_IMG;
     }
     return TODO_OK;
