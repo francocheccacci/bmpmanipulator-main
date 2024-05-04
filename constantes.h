@@ -5,5 +5,4 @@
 #define NO_SE_PUEDE_CREAR_ARCHIVO 20
 
 
-
 #endif // CONSTANTES_H_INCLUDED

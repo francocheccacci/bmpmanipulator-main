@@ -86,7 +86,7 @@
 	"funciones_estudiante.h"
 	"constantes.h"
 
-1714528388 source:c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\funciones_estudiante.c
+1714847913 source:c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\funciones_estudiante.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -97,10 +97,10 @@
 
 1714439182 c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\estructuras.h
 
-1714521625 c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\funciones_estudiante.h
+1714849342 c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\funciones_estudiante.h
 	"estructuras.h"
 
-1714439182 c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\constantes.h
+1714844751 c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\constantes.h
 
 1714441532 source:c:\users\185429\documents\unlam\topicos_de_programacion\tp\bmpmanipulator-main\main.c
 	<stdio.h>
