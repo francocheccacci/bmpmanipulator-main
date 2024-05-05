@@ -9,6 +9,7 @@
 #define ERROR_MEMORIA 40
 #define ERROR_NO_BMP 50
 #define ERROR_NO_IMG 60
+#define ERROR_ARG 70
 
 /*
     Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el último campo.
@@ -71,7 +72,7 @@ void solucion(int argc, char* argv[])
     switch (resultado)
     {
     case TODO_OK:
-        printf("\n\n *** Ha finalizado el proceso de ejecución. *** \n\n");
+        printf("\n\n *** Ha finalizado el proceso de ejecucion. *** \n\n");
         break;
     case ERROR_MULT_IMG:
         printf("\n\nError: Se debe pasar solo una imagen como argumento.\n\n");
@@ -82,8 +83,8 @@ void solucion(int argc, char* argv[])
     case ERROR_NO_BMP:
         printf("\n\nError: El archivo indicado no es de tipo bit map.\n\n");
         break;
-    case ERROR_NO_IMG:  
-        printf("\n\nError: No se recibe imagen.\n\n");
+    case ERROR_NO_IMG:
+        printf("\n\nError: No se recibe imagen.\n");
         break;
     }
 
@@ -149,16 +150,10 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
                     fseek(pf, 2, SEEK_CUR);
                     fread(&header->profundidad, sizeof(unsigned short), 1, pf);
 
-                    printf("\n tam arch: %d \n comienzo: %d \n tam enca: %d \n ancho: %d \n alto: %d \n prof %d ",
-                           header->tamArchivo, header->comienzoImagen, header->tamEncabezado, header->ancho,
-                           header->alto, header->profundidad
-                          );
-
                     img = (t_pixel *)malloc(header->alto * header->ancho * sizeof(t_pixel));
                     t_pixel *ini = img;
                     if(img == NULL)
                     {
-                        //printf("\n No se pudo reservar memoria para la imagen.");
                         return ERROR_MEMORIA;
                     }
 
@@ -171,8 +166,6 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
                         }
                     }
 
-                    printf("Primer pixel: R=%u, G=%u, B=%u\n", img[0].pixel[0], img[0].pixel[1], img[0].pixel[2]);
-
                     definirEfecto(argv, header, img);
                     img = ini;
                     free(img);
@@ -180,7 +173,6 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
                 }
                 else
                 {
-                    //printf("\n El archivo indicado no es de tipo bit map.");
                     return ERROR_NO_BMP;
                 }
             }
@@ -190,13 +182,12 @@ int openBmpFile(char* argv[], t_pixel *img, t_metadata *header)
     }
     else
     {
-        //printf("No recibe imagen");
         return ERROR_NO_IMG;
     }
     return TODO_OK;
 }
 
-// funcion que convierte la imagen a escala de grises
+
 int escalaDeGrises(t_pixel *imagen, t_metadata *header, char nombre[])
 {
     t_pixel * imgCopy = malloc(sizeof(t_pixel)*header->alto*header->ancho);
@@ -349,7 +340,6 @@ int aumentar50green(t_pixel *imagen, t_metadata *header, char nombre[])
     crearBmpSalida(imgCopy, header, nombre);
     free(imgCopy);
     return TODO_OK;
-
 }
 
 int recortar50(t_pixel *imagen, t_metadata *header, char nombre[])
@@ -361,28 +351,22 @@ int recortar50(t_pixel *imagen, t_metadata *header, char nombre[])
     t_metadata * headerCopy = malloc(sizeof(t_metadata));
     memcpy(headerCopy, header, sizeof(t_metadata));
 
-    // definimos el nuevo tamaño de la imagen
     int ancho = header->ancho / 2;
     int alto = header->alto / 2;
 
-    // reservamos memoria para la nueva imagen
     t_pixel *imgReco = malloc(ancho * alto * sizeof(t_pixel));
 
-    // copiamos los pixeles de la imagen original a la nueva imagen
     for (int i = 0; i < alto; i++)
     {
         for (int j = 0; j < ancho; j++)
         {
-            // copiamos los pixeles de la imagen original a la nueva imagen
             imgReco[i * ancho + j] = imgCopy[i * header->ancho + j];
         }
     }
 
-    //modificamos el header de la imagen
     headerCopy->alto = alto;
     headerCopy->ancho = ancho;
 
-    //creamos la imagen de salida
     crearBmpSalida(imgReco, headerCopy, nombre);
 
     free(imgReco);
@@ -401,31 +385,25 @@ int rotar90izquierda(t_pixel *imagen, t_metadata *header, char nombre[])
     t_metadata * headerCopy = malloc(sizeof(t_metadata));
     memcpy(headerCopy, header, sizeof(t_metadata));
 
-// definimos el nuevo tamaño de la imagen
     int ancho = header->alto;
     int alto = header->ancho;
     t_pixel* ini = imagen;
-    // reservamos memoria para la nueva imagen
+
     t_pixel * imgRot = malloc(ancho * alto * sizeof(t_pixel));
 
-    // copiamos los pixeles de la imagen original a la nueva imagen
     for (int i = 0; i < header->alto; i++)
     {
         for (int j = 0; j < header->ancho; j++)
         {
-            //j * ancho avanza en las columnas
-            //header->alto - i - 1 | calcula la fila en la imagen rotada
-            //me posiciono en la columna con j * ancho
             imgRot[j * ancho + (header->alto - i - 1)] = imagen[i * header->ancho + j];
         }
     }
 
     imagen = ini;
-    //modificamos el header de la imagen
+
     headerCopy->alto = alto;
     headerCopy->ancho = ancho;
 
-    //creamos la imagen de salida
     crearBmpSalida(imgRot, headerCopy, nombre);
 
     free(imgRot);
@@ -445,24 +423,16 @@ int rotar90derecha(t_pixel *imagen, t_metadata *header, char nombre[])
     t_metadata * headerCopy = malloc(sizeof(t_metadata));
     memcpy(headerCopy, header, sizeof(t_metadata));
 
-    // definimos el nuevo tamaño de la imagen
     int ancho = header->alto;
     int alto = header->ancho;
 
-    // reservamos memoria para la nueva imagen
     t_pixel *imgRot = malloc(ancho * alto * sizeof(t_pixel));
 
-    // copiamos los pixeles de la imagen original a la nueva imagen
     for (int i = 0; i < header->alto; i++)
     {
         for (int j = 0; j < header->ancho; j++)
         {
-            // imagen[i * header->ancho + j] es la posicion (i,j) de la imagen original.
-            // header->ancho es la altura de la imagen y j representa la coordenada Y
-            // en la imagen rotada i es mi eje X
-
             imgRot[ (header->ancho - j - 1) * ancho + i] = imgCopy[i * header->ancho + j];
-            // a la altura de la imagen le resto el valor de j para posicionarme en el pixel de la imagen rotada
         }
     }
 
@@ -484,7 +454,6 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
     t_pixel *img2 = NULL;
     t_metadata *header2 = NULL;
     header2 = malloc(sizeof(t_metadata));
-    printf("hola.\n");
 
     printf("Ingrese nombre del segundo archivo para combinar: (sin la extenstion .bmp) \n");
     char nombreArchivo[50];
@@ -494,7 +463,7 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
     if (!pf_img2)
     {
         printf("No se pudo abrir el archivo.\n");
-        return 1;
+        return ARCHIVO_NO_ENCONTRADO;
     }
 
     float variador = 0;
@@ -506,13 +475,11 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
     while(variador < 0 || variador > 1);
 
 
-    if(getc(pf_img2) == 'B' && getc(pf_img2) == 'M')  // aca estoy parado en el byte 2
+    if(getc(pf_img2) == 'B' && getc(pf_img2) == 'M')
     {
         fread(&header2->tamArchivo, sizeof(unsigned int), 1, pf_img2);
-        fseek(pf_img2, 4, SEEK_CUR); // me muevo 4 bytes, para posicionarme en el byte 10
-        // este byte nro 10 contiene el inicio de la imagen
-        fread(&header2->comienzoImagen, sizeof(unsigned int), 1, pf_img2);// hago el fread, como es unsigned int ocupa 4bytes,
-        // y el puntero queda en el byte 14, donde se encuentra el tamanio del header
+        fseek(pf_img2, 4, SEEK_CUR);
+        fread(&header2->comienzoImagen, sizeof(unsigned int), 1, pf_img2);
         fread(&header2->tamEncabezado, sizeof(unsigned int), 1, pf_img2);
         fread(&header2->ancho, sizeof(unsigned int), 1, pf_img2);
         fread(&header2->alto, sizeof(unsigned int), 1, pf_img2);
@@ -523,19 +490,18 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
             free(img2);
             free(header2);
             fclose(pf_img2);
-            return 1;
+            return ARCHIVO_NO_ENCONTRADO;
 
         }
 
         fseek(pf_img2, 2, SEEK_CUR);
         fread(&header2->profundidad, sizeof(unsigned short), 1, pf_img2);
 
-        // leo la imagen
         img2 = (t_pixel *)malloc(header2->alto * header2->ancho * sizeof(t_pixel));
         if(img2 == NULL)
         {
             printf("\n No se pudo reservar memoria para la imagen.");
-            return 1;
+            return ERROR_MEMORIA;
         }
 
         fseek(pf_img2, header2->comienzoImagen, SEEK_SET);
@@ -552,7 +518,6 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
         t_pixel *imgCombinada = malloc(header1->alto * header1->ancho * sizeof(t_pixel));
         for (int i = 0; i < header1->alto * header1->ancho; i++)
         {
-            // copiamos los pixeles de la imagen original a la nueva imagen
             b = ( ((1 - variador) * imagen1[i].pixel[0]) + img2[i].pixel[0] ) / 2;
             g = ( ((1 - variador) * imagen1[i].pixel[1]) + img2[i].pixel[1] ) / 2;
             r = ( ((1 - variador) * imagen1[i].pixel[2]) + img2[i].pixel[2] ) / 2;
@@ -566,6 +531,7 @@ int combinarImagenes(t_pixel *imagen1, t_metadata *header1, char nombre[])
     else
     {
         printf("\n El archivo indicado no es de tipo bit map.");
+        return ERROR_NO_BMP;
     }
 
     free(img2);
@@ -583,13 +549,13 @@ int crearBmpSalida(t_pixel *imagen, t_metadata *header, char nombre[])
     if(!nombre)
     {
         printf("Error al leer el argumento");
-        return 1;
+        return ERROR_ARG;
     }
 
     if (pf == NULL)
     {
         printf("No se pudo abrir el archivo.");
-        return 1;
+        return ARCHIVO_NO_ENCONTRADO;
     }
 
     fwrite("BM", sizeof(char), 2, pf);
